@@ -62,7 +62,7 @@ BEGIN
 END
 
 --EXEC ActualizarPersonal @IDPERSONAL = 1, @PaisPersonal = 'USA'
---GO
+GO
 
 --2. Torneo
 --Listar
@@ -128,7 +128,7 @@ BEGIN
 END
 
 --EXEC ActualizarTorneo @IDTORNEO = 1, @LUGARTORNEO = 'USA'
---GO
+GO
 
 --3. Juego
 --Listar
@@ -192,7 +192,7 @@ BEGIN
 END
 
 --EXEC ActualizarJuego @idjuego = 10, @nomjuego = 'game'
---GO
+GO
 
 --4. Equipo
 --Listar
@@ -215,7 +215,7 @@ else
         set @IdEquipo=(Select (Max (IdEquipo)+ 10)
     From EQUIPO)
 Insert into EQUIPO values (@IdEquipo,@NomEquipo,@PaisEquipo)
-
+go
 --EXEC InsertarEquipo @IDEQUIPO = 10, @NOMEQUIPO = 'test', @PAISEQUIPO = 'test'
 --GO
 
@@ -267,7 +267,7 @@ GO
 
 --Insertar
 CREATE PROCEDURE InsertarJugador
-@ApeJugador varchar(30), @NomJugador varchar(30),@NickJugador varchar(30),@EdadJugador int, @PaisJugador varchar(30),@CapJugador char(1),@IdEquipo int
+@ApeJugador varchar(30), @NomJugador varchar(30),@NickJugador varchar(30),@EdadJugador int, @PaisJugador varchar(30),@CapJugador char(1),@RolJugador varchar(15),@IdEquipo int
 AS
 declare @IdJugador int
 set @IdJugador=(Select count(*) from JUGADOR)
@@ -276,7 +276,7 @@ if @IdJugador=0
 else
         set @IdJugador=(Select (Max (IdJugador)+ 1)
     From JUGADOR)
-Insert into JUGADOR values (@IdJugador,@ApeJugador,@NomJugador,@NickJugador,@EdadJugador,@PaisJugador,@CapJugador,@IdEquipo)
+Insert into JUGADOR values (@IdJugador,@ApeJugador,@NomJugador,@NickJugador,@EdadJugador,@PaisJugador,@CapJugador,@RolJugador,@IdEquipo)
 go
 
 --EXEC InsertarJugador @idjugador = 10, @ApeJugador ='adfa',@NomJugador = 'fdaa', @NickJugador = 'nick', @EdadJugador = 20, @PaisJugador = 'asdf', @CapJugador = 'X', @idequipo = 1000
@@ -304,7 +304,7 @@ GO
 
 --Actualizar
 CREATE PROCEDURE ActualizarJugador
-	@IdJugador int, @ApeJugador varchar(30) = NULL, @NomJugador varchar(30) = NULL,@NickJugador varchar(30) = NULL,@EdadJugador int = NULL, @PaisJugador varchar(30) = NULL,@CapJugador char(1) = NULL,@IdEquipo int = NULL
+	@IdJugador int, @ApeJugador varchar(30) = NULL, @NomJugador varchar(30) = NULL,@NickJugador varchar(30) = NULL,@EdadJugador int = NULL, @PaisJugador varchar(30) = NULL,@CapJugador char(1)=NULL,@RolJugador varchar(15) = NULL,@IdEquipo int = NULL
 AS
 BEGIN
     SET NOCOUNT ON;
@@ -315,6 +315,7 @@ BEGIN
 		EdadJugador=ISNULL(@EdadJugador,EdadJugador),
 		PaisJugador=ISNULL(@PaisJugador,PaisJugador),
 		CapJugador=ISNULL(@CapJugador,CapJugador),
+		RolJugador=ISNULL(@RolJugador,RolJugador),
 		IdEquipo=ISNULL(@IdEquipo,IdEquipo)
     WHERE IdJugador=@IdJugador
 END
@@ -435,3 +436,90 @@ GO
 
 --EXEC ActualizarDetalle_Equipo @IdEquipo = 10, @IdTorneo= 1, @Victorias = 3
 --GO 
+create procedure usp_ListarHeroes
+as
+select * from HEROE
+go
+
+create procedure usp_ListarJugador
+as
+select * from JUGADOR
+go
+
+--HEROE
+use eSports
+go
+--Insertar
+CREATE PROCEDURE InsertarHeroe
+@NomHeroe VARCHAR(50), @Atributo varchar(50), @Tipo varchar(50), @Complejidad varchar(10)
+AS
+declare @IdHeroe int
+set @IdHeroe = (Select count(*) from HEROE)
+if @IdHeroe =0 
+       set @IdHeroe = 1
+else
+        set @IdHeroe=(Select (Max (IdHeroe)+ 1)
+    From HEROE)
+Insert into HEROE values (@IdHeroe, @NomHeroe , @Atributo, @Tipo, @Complejidad)
+go
+
+
+--Eliminar
+CREATE PROCEDURE EliminarHeroe
+@IdHeroe INT
+AS
+DELETE FROM HEROE WHERE IdHeroe = @IdHeroe
+GO
+
+--Listar
+CREATE PROCEDURE usp_ListarHeroes
+AS
+SELECT * FROM HEROE
+GO
+
+--Consultar
+CREATE PROCEDURE ConsultarHeroe
+@IdHeroe INT
+AS
+SELECT * FROM HEROE WHERE IdHeroe = @IdHeroe
+GO
+
+
+
+--Actualizar
+CREATE PROCEDURE ActualizarHeroe
+    @IdHeroe INT, @NomHeroe VARCHAR(50) = NULL, @Atributo varchar(50) = NULL, @Tipo varchar(50) = NULL, @Complejidad varchar(10) = NULL
+AS
+BEGIN
+    SET NOCOUNT ON;
+    UPDATE HEROE
+    SET NomHeroe=ISNULL(@NomHeroe,NomHeroe), 
+        Atributo=ISNULL(@Atributo,Atributo), 
+        Tipo=ISNULL(@Tipo, Tipo),
+		Complejidad=ISNULL(@Complejidad, Complejidad)
+    WHERE IdHeroe=@IdHeroe
+END
+
+create view vw_HEROEROL
+as
+select d.IdPartida,d.IdJugador, j.NomJugador, d.IdHeroe, h.NomHeroe, j.RolJugador, d.Kills, d.Deaths, d.Assists
+from DETALLE_JUGADOR_PARTIDA  as d inner join
+	JUGADOR as j on d.IdJugador = j.IdJugador inner join
+	HEROE as h on d.IdHeroe = h.IdHeroe
+go
+
+
+--Heroe por rol
+create procedure usp_ListarHeroeRol
+@idheroe int,
+@roljugador varchar(15)
+as
+select IdPartida,IdJugador, NomJugador, IdHeroe, NomHeroe, Kills, Deaths, Assists
+from vw_HEROEROL
+where IdHeroe = @idheroe and RolJugador = @roljugador
+go
+
+
+
+exec usp_ListarHeroeRol @idheroe = 100, @roljugador = 'Offlaner'
+go

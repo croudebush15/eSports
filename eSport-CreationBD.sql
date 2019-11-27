@@ -71,9 +71,11 @@ create table JUGADOR (
 	EdadJugador int NULL,
 	PaisJugador varchar(30) NOT NULL,
 	CapJugador char(1) NULL,
+	RolJugador varchar(15) not null,
 	IdEquipo int NOT NULL
 )
 go
+
 
 create table DETALLE_PERSONAL (
 	IdPersonal int NOT NULL,
@@ -92,8 +94,67 @@ create table DETALLE_EQUIPO (
 )
 go
 
+CREATE TABLE HEROE
+(
+IdHeroe INT not null,
+NomHeroe VARCHAR(50) not null,
+Atributo VARCHAR(50) not null,
+Tipo VARCHAR(50) not null,
+Complejidad VARCHAR(10) not null,
+)
+GO
+
+create table DETALLE_JUGADOR_PARTIDA 
+(
+	IdJugador int NOT NULL,
+	IdPartida int NOT NULL,
+	IdHeroe int NOT NULL,
+	[Kills] int NOT NULL,
+	[Deaths] int NOT NULL,
+	[Assists] int NOT NULL
+)
+
+create table PARTIDA 
+(
+	IdPartida int not null,
+	RoundPartida varchar (20) not null,
+	FechaPartida datetime not null,
+	Team varchar(30) not null,
+	Score char(3) not null,
+	vsTeam varchar(30) not null,
+	IdTorneo int not null
+)
+go
+
+create table Usuario
+(
+	
+	Usuario VARCHAR(50) null,
+	[Password] VARCHAR(50) null,
+	
+)
+
+insert into Usuario values ('test1','123')
+
+
+
+
+
 ---------------------------------
 --- Asignación de PK ------------
+alter table PARTIDA
+	add primary key (IdPartida)
+go
+
+
+alter table DETALLE_JUGADOR_PARTIDA
+	add primary key (IdJugador,IdPartida,IdHeroe)
+go
+
+
+alter table HEROE
+	add primary key (IdHeroe)
+go
 
 alter table PERSONAL
 	add primary key (IdPersonal)
@@ -164,6 +225,35 @@ go
 alter table DETALLE_EQUIPO
 	add foreign key (IdTorneo)
 		references TORNEO
+		 ON DELETE CASCADE
+		 ON UPDATE CASCADE
+go
+
+alter table PARTIDA
+	add foreign key (IdTorneo)
+		references TORNEO
+		 ON DELETE CASCADE
+		 ON UPDATE CASCADE
+go
+
+
+alter table DETALLE_JUGADOR_PARTIDA
+	add foreign key (IdJugador)
+		references JUGADOR
+		 ON DELETE CASCADE
+		 ON UPDATE CASCADE
+go
+
+alter table DETALLE_JUGADOR_PARTIDA
+	add foreign key (IdPartida)
+		references PARTIDA
+		 ON DELETE CASCADE
+		 ON UPDATE CASCADE
+go
+
+alter table DETALLE_JUGADOR_PARTIDA
+	add foreign key (IdHeroe)
+		references HEROE
 		 ON DELETE CASCADE
 		 ON UPDATE CASCADE
 go

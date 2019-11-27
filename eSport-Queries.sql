@@ -67,6 +67,35 @@ ORDER BY IdTorneo
 GO
 ---------------------------------
 -------Creación de Views---------
+--usuario proce
+create procedure usp_Usuario
+@user varchar(50),
+@pass varchar(50)
+as
+select * from Usuario where Usuario = @user and [Password] = @pass
+go
+
+--- view Heroe Rol
+create view vw_HEROEROL
+as
+select d.IdPartida,d.IdJugador, j.NickJugador, d.IdHeroe, h.NomHeroe, j.RolJugador, d.Kills, d.Deaths, d.Assists
+from DETALLE_JUGADOR_PARTIDA  as d inner join
+	JUGADOR as j on d.IdJugador = j.IdJugador inner join
+	HEROE as h on d.IdHeroe = h.IdHeroe
+go
+
+--Procedur Heroe Rol
+
+create procedure usp_ListarHeroeRol
+@idheroe int,
+@roljugador varchar(15)
+as
+select IdPartida,IdJugador, NickJugador, IdHeroe, NomHeroe, Kills, Deaths, Assists
+from vw_HEROEROL
+where IdHeroe = @idheroe and RolJugador = @roljugador
+go
+
+
 
 ---1. Datos personales de comentadores
 create view dbo.ComentadoresNombres
@@ -194,4 +223,6 @@ go
 	where JUGADOR.PaisJugador = 'China'
 	order by [Apellidos y Nombres]
 	go
+
+
 
