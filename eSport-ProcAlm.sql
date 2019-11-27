@@ -523,3 +523,42 @@ go
 
 exec usp_ListarHeroeRol @idheroe = 100, @roljugador = 'Offlaner'
 go
+
+
+--CONSULTAS DE JUGADOR
+CREATE PROCEDURE ListarCapitanes
+AS
+SELECT JUGADOR.ApeJugador, JUGADOR.NomJugador, JUGADOR.NickJugador, JUGADOR.PaisJugador, JUGADOR.RolJugador, EQUIPO.NomEquipo
+	FROM JUGADOR
+	INNER JOIN EQUIPO ON JUGADOR.IdEquipo = EQUIPO.IdEquipo
+WHERE JUGADOR.CapJugador = 'C'
+ORDER BY JUGADOR.ApeJugador
+GO
+
+CREATE PROCEDURE ListarJugadorPorPais
+@pais varchar(30)
+AS
+SELECT JUGADOR.ApeJugador, JUGADOR.NomJugador, JUGADOR.NickJugador, JUGADOR.PaisJugador, JUGADOR.RolJugador, EQUIPO.NomEquipo
+	FROM JUGADOR
+	INNER JOIN EQUIPO ON JUGADOR.IdEquipo = EQUIPO.IdEquipo
+WHERE JUGADOR.PaisJugador = @pais
+ORDER BY JUGADOR.ApeJugador
+GO
+
+CREATE PROCEDURE ListarCapitanPorPais
+@pais varchar(30)
+AS
+SELECT JUGADOR.ApeJugador, JUGADOR.NomJugador, JUGADOR.NickJugador, JUGADOR.PaisJugador, JUGADOR.RolJugador, EQUIPO.NomEquipo
+	FROM JUGADOR
+	INNER JOIN EQUIPO ON JUGADOR.IdEquipo = EQUIPO.IdEquipo
+WHERE JUGADOR.PaisJugador = @pais AND JUGADOR.CapJugador = 'C'
+GO
+
+--EXEC ListarCapitanPorPais @PAIS = 'CHINA'
+
+CREATE PROCEDURE ListarPaisJugadores
+AS 
+SELECT DISTINCT JUGADOR.PaisJugador FROM JUGADOR
+GO
+
+--EXEC ListarPaisJugadores
