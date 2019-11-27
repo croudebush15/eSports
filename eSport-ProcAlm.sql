@@ -502,7 +502,7 @@ END
 
 create view vw_HEROEROL
 as
-select d.IdPartida,d.IdJugador, j.NomJugador, d.IdHeroe, h.NomHeroe, j.RolJugador, d.Kills, d.Deaths, d.Assists
+select d.IdPartida,d.IdJugador, j.NickJugador, d.IdHeroe, h.NomHeroe, j.RolJugador, d.Kills, d.Deaths, d.Assists
 from DETALLE_JUGADOR_PARTIDA  as d inner join
 	JUGADOR as j on d.IdJugador = j.IdJugador inner join
 	HEROE as h on d.IdHeroe = h.IdHeroe
@@ -514,7 +514,7 @@ create procedure usp_ListarHeroeRol
 @idheroe int,
 @roljugador varchar(15)
 as
-select IdPartida,IdJugador, NomJugador, IdHeroe, NomHeroe, Kills, Deaths, Assists
+select IdPartida,IdJugador, NickJugador, IdHeroe, NomHeroe, Kills, Deaths, Assists
 from vw_HEROEROL
 where IdHeroe = @idheroe and RolJugador = @roljugador
 go
