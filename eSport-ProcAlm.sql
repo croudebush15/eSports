@@ -562,3 +562,15 @@ SELECT DISTINCT JUGADOR.PaisJugador FROM JUGADOR
 GO
 
 --EXEC ListarPaisJugadores
+
+
+
+
+ALTER PROCEDURE [dbo].[ListarJugador]
+AS
+SELECT JUGADOR.*, EQUIPO.NomEquipo
+	FROM JUGADOR
+	INNER JOIN EQUIPO ON EQUIPO.IdEquipo = JUGADOR.IdEquipo
+
+
+--EXEC ListarJugador
