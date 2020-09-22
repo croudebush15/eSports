@@ -13,10 +13,10 @@ GO
 
 create database eSports
 on primary
-(name = eSports_Dat, filename = 'C:\BD_G4\eSports_Dat.mdf',
+(name = eSports_Dat, filename = 'C:\ISIL\eSports_BD\eSports_Dat.mdf',
 size = 8, maxsize = 200, filegrowth = 1)
 log on
-(name = eSports_Log, filename = 'C:\BD_G4\eSports.ldf',
+(name = eSports_Log, filename = 'C:\ISIL\eSports_BD\eSports.ldf',
 size = 1, maxsize = 80, filegrowth = 1)
 go
 
@@ -90,6 +90,22 @@ create table DETALLE_EQUIPO (
 	IdTorneo int NOT NULL,
 	Victorias int NOT NULL,
 	Derrotas int NOT NULL,
+	Puesto int NULL
+)
+go
+
+create table PRIZEPOOL (
+	IdPrizepool int NOT NULL,
+	IdTorneo int NOT NULL,
+	PrizepoolTotal MONEY NOT NULL
+)
+go
+
+create table PUESTO_PRIZEPOOL (
+	IdPuesto int NOT NULL,
+	IdPrizepool int NOT NULL,
+	Porcentaje int NOT NULL,
+	GananciaEquipo MONEY NOT NULL,
 	Puesto int NULL
 )
 go
@@ -184,6 +200,14 @@ alter table DETALLE_EQUIPO
 	add primary key (IdEquipo,IdTorneo)
 go
 
+alter table PRIZEPOOL
+	add primary key (IdPrizepool)
+go
+
+alter table PUESTO_PRIZEPOOL
+	add primary key (IdPuesto)
+go
+
 ---------------------------------
 --- Asignación de FK ------------
 
@@ -254,6 +278,20 @@ go
 alter table DETALLE_JUGADOR_PARTIDA
 	add foreign key (IdHeroe)
 		references HEROE
+		 ON DELETE CASCADE
+		 ON UPDATE CASCADE
+go
+
+alter table PRIZEPOOL
+	add foreign key (IdTorneo)
+		references TORNEO
+		 ON DELETE CASCADE
+		 ON UPDATE CASCADE
+go
+
+alter table PUESTO_PRIZEPOOL 
+	add foreign key (IdPrizepool)
+		references PRIZEPOOL
 		 ON DELETE CASCADE
 		 ON UPDATE CASCADE
 go
